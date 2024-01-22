@@ -46,6 +46,12 @@ void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
 }
 
 bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
+	vector<PrimePower>::iterator inum, iden;
+	iden = den.end();
+	while(iden != den.end()){ // Outer loop
+		
+	
+	
 	return true;
 }
 
