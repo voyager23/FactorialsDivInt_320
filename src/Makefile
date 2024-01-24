@@ -1,5 +1,8 @@
 # makefile template
 
+ddevloop : ddevloop.cxx
+	g++ -std=c++17 -g ddevloop.cxx ../obj/toolbox.o -o ../bin/ddevloop
+	
 bdev : bdev.cxx
 	g++ -std=c++17 -g bdev.cxx ../obj/toolbox.o -o ../bin/bdev
 	
@@ -9,7 +12,10 @@ adev : adev.cxx
 ../obj/toolbox.o : ../ToolBox/toolbox.cxx
 	g++ -std=c++17 -c ../ToolBox/toolbox.cxx -o ../obj/toolbox.o
 
-phoney : run
+phoney : run gdb
 
 run:
-	../bin/bdev
+	../bin/ddevloop
+	
+gdb:
+	gdb ../bin/ddevloop
