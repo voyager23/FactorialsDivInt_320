@@ -61,32 +61,10 @@ bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
 
 int main(int argc, char **argv)
 {
-	const ul modulus = 1e18;
-	vector<ul>primes;	// Required by Sieve
-	SieveOfEratosthenes(primes, 1001);
+	ul sum = 0;
+	for(ul n = 10; n != 1001; ++n) sum += (n * 1234567890);
+	cout << sum << endl;
 	
-	vector<PrimePower> pf_n, pp_out;
-	vector<PrimePower> num, den;
-
-	ul n=138;
-	ul power=1234567890;
-	generate_descriptors(primes, n, pf_n);	
-	legendre(pf_n, n, pp_out);
-	den = pp_out;
-	// Raise demoninator powers
-	for(auto pp = den.begin(); pp != den.end(); ++pp){
-		pp->second = pp->second * power;
-	}
-	// Find a value for where n! is divisible by den.
-	for(n = (138*power)-1; n != (138*power)+2; ++n){
-		//cout << n << " ";
-		generate_descriptors(primes, n, pf_n);
-		legendre(pf_n, n, num);
-		if(is_divisible(num, den)) {
-			cout << endl << n << "! is divisible." << endl;
-			break;
-		}
-	}		
 	
 	return 0;
 }

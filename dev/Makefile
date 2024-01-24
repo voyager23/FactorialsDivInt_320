@@ -1,5 +1,11 @@
 # makefile template
 
+ddev : ddev.cxx
+	g++ -std=c++17 -g ddev.cxx ../obj/toolbox.o -o ../bin/ddev
+	
+cdev : cdev.cxx
+	g++ -std=c++17 -g cdev.cxx ../obj/toolbox.o -o ../bin/cdev
+	
 bdev : bdev.cxx
 	g++ -std=c++17 -g bdev.cxx ../obj/toolbox.o -o ../bin/bdev
 	
@@ -12,4 +18,4 @@ adev : adev.cxx
 phoney : run
 
 run:
-	../bin/bdev
+	../bin/ddev

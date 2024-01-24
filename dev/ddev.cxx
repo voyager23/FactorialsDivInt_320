@@ -26,9 +26,11 @@
 #include <utility>
 #include "../inc/toolbox.hxx"
 using namespace std;
-
+typedef vector<PrimePower> vpp;
 void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out);
 bool num_isdivisible_den(vector<PrimePower> num, vector<PrimePower> den);
+// debug function
+void prt_vpp(vpp z);
 
 void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
 	ul sum, divisor, r;
@@ -46,6 +48,7 @@ void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
 }
 
 bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
+	// test if the numerator is divisble by the denominator
 	vector<PrimePower>::iterator inum, iden;
 	iden = den.begin();
 	while(iden != den.end()){ // Outer loop
@@ -58,36 +61,51 @@ bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
 	}
 	return true;
 }
+void prt_vpp(vpp z){
+	for(auto pp : z) cout << pp.first << "^" << pp.second << "  ";
+	cout << endl;
+}
 
 int main(int argc, char **argv)
 {
-	const ul modulus = 1e18;
+	// Checking a range of values
 	vector<ul>primes;	// Required by Sieve
 	SieveOfEratosthenes(primes, 1001);
-	
-	vector<PrimePower> pf_n, pp_out;
-	vector<PrimePower> num, den;
 
-	ul n=138;
-	ul power=1234567890;
-	generate_descriptors(primes, n, pf_n);	
-	legendre(pf_n, n, pp_out);
-	den = pp_out;
-	// Raise demoninator powers
-	for(auto pp = den.begin(); pp != den.end(); ++pp){
-		pp->second = pp->second * power;
-	}
-	// Find a value for where n! is divisible by den.
-	for(n = (138*power)-1; n != (138*power)+2; ++n){
-		//cout << n << " ";
-		generate_descriptors(primes, n, pf_n);
-		legendre(pf_n, n, num);
-		if(is_divisible(num, den)) {
-			cout << endl << n << "! is divisible." << endl;
-			break;
-		}
-	}		
+	ul d = 17;
+	ul power = 3;
+	vpp pf_n, numerator, denom, denominator;
+	//vpp denom = {make_pair(2,16),make_pair(3,8),make_pair(5,3),make_pair(7,2),make_pair(11,1),make_pair(13,1),make_pair(17,1)}; // 18!
+	//for(auto pp : denom) pp.second *= power;	// 18! ^ power
+	generate_descriptors(primes, d, denom);	// get the prime powers
+	legendre(denom, d, denominator);	// get prime powers of factorial
+	for(vpp::iterator pp = denominator.begin(); pp != denominator.end(); ++pp) pp->second = pp->second*power;	// raise factorial to power
 	
-	return 0;
+	ul n = d+1;
+		n = 34;
+	do{
+		//cout << "checking n = " << n << "  ";
+		generate_descriptors(primes, n, pf_n);  // generate the prime factors of n
+		legendre(pf_n, n, numerator);			// generate the prime factors of n!
+		if(is_divisible(numerator,denominator)) {		// check if denominator | numerator
+			cout << n << "! is divisible by " << d <<"! ^ " << power << endl;
+			prt_vpp(numerator);
+			prt_vpp(denominator);
+			break;
+		} else {
+			//cout << endl;
+			n += 1;
+		}
+	} while(1);
+	
+	return 0;	// as required by standard
 }
+
+
+
+
+
+
+
+
 

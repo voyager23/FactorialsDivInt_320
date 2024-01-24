@@ -1,0 +1,36 @@
+
+18! = 6402373705728000 = 2^16 * 3^8 * 5^3 * 7^2 * 11 * 13 * 17
+
+(18!) ^ 3 = (2^16 * 3^8 * 5^3 * 7^2 * 11 * 13 * 17) ^ 3
+
+		  = (2^16 * 3^8 * 5^3 * 7^2 * 11 * 13)^3 * 17^3
+		  
+		  = d
+		  
+		  if d | n! then n! must contain 17^x where x >= 3;
+		  
+		  typedef vector<PrimePower> vpp
+		  
+		  ul d = 18
+		  ul power = 3;
+		  vpp denom = {(2,16),(3,8),(5,3),(7,2),(11,1),(13,1),(17,1)}
+
+		  // multiply all exponents by power
+  		  vpp denominator = {(2,48),(3,24),(5,9),(7,6),(11,3),(13,3),(17,3)}	// set constant
+  		  
+  		  
+  		  n = d+1
+  		  do {
+			cout checking n ...
+			generate_descriptors(primes,n,pf_n)
+			legendre(pf_n,n,numerator)
+			if(is_divisible(numerator,denominator)){
+				denominator | n! as required
+				cout denominator 18! ^ 3
+				cout numerator n!
+				break
+			}
+			n += 1
+  		  }
+  		  
+  		  step 1 test a range of powers for 18
