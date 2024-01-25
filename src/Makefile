@@ -1,5 +1,8 @@
 # makefile template
 
+legendre : legendre.cxx
+	g++ -std=c++17 -g legendre.cxx ../obj/toolbox.o -o ../bin/legendre
+	
 ddevloop : ddevloop.cxx
 	g++ -std=c++17 -g ddevloop.cxx ../obj/toolbox.o -o ../bin/ddevloop
 	
@@ -15,7 +18,7 @@ adev : adev.cxx
 phoney : run gdb
 
 run:
-	../bin/ddevloop
+	../bin/legendre
 	
 gdb:
-	gdb ../bin/ddevloop
+	gdb ../bin/legendre

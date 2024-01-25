@@ -25,12 +25,16 @@
 #include <vector>
 #include <utility>
 #include "../inc/toolbox.hxx"
+
 using namespace std;
 typedef vector<PrimePower> vpp;
 void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out);
 bool num_isdivisible_den(vector<PrimePower> num, vector<PrimePower> den);
-// debug function
+
+// debug functions
 void prt_vpp(vpp z);
+
+// -----------------------------------------------------------------------
 
 void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
 	ul sum, divisor, r;
@@ -66,43 +70,47 @@ void prt_vpp(vpp z){
 	cout << endl;
 }
 
+//========================================================================
+
 int main(int argc, char **argv)
 {
 	// Checking a range of values
 	vector<ul>primes;	// Required by Sieve
 	SieveOfEratosthenes(primes, 1001);
-
-	ul d = 17;
-	while(d < 100){
-		ul power = 60;
-		vpp pf_n, numerator, denom, denominator;
-		//vpp denom = {make_pair(2,16),make_pair(3,8),make_pair(5,3),make_pair(7,2),make_pair(11,1),make_pair(13,1),make_pair(17,1)}; // 18!
-		//for(auto pp : denom) pp.second *= power;	// 18! ^ power
-		generate_descriptors(primes, d, denom);	// get the prime powers
-		legendre(denom, d, denominator);	// get prime powers of factorial
-		for(vpp::iterator pp = denominator.begin(); pp != denominator.end(); ++pp) pp->second = pp->second*power;	// raise factorial to power
-		
-		ul n = d+1;
-			n = 34;
-		do{
-			//cout << "checking n = " << n << "  ";
-			generate_descriptors(primes, n, pf_n);  // generate the prime factors of n
-			legendre(pf_n, n, numerator);			// generate the prime factors of n!
-			if(is_divisible(numerator,denominator)) {		// check if denominator | numerator
-				cout << endl << d << "! ^ " << power << " | " << n << "!" <<endl;
-				if(n != d*power){
-					cout <<"?{" << d*power << "!}?" << endl;
-				}
-				prt_vpp(numerator);
-				prt_vpp(denominator);
-				break;
-			} else {
-				//cout << endl;
-				n += 1;
-			}
-		} while(1);
-		d += 1;
+	vpp pp_in, pp_out, denominator;
+	
+	// inputs are i (62) and power
+	ul i = 62;
+	ul power = 60;
+	
+	generate_descriptors(primes, i, pp_in);
+	legendre(pp_in, i, pp_out);
+	
+	cout << "Prime factors of " << i << endl;
+	prt_vpp(pp_in);
+	cout << i << "! ^ " << power << endl;
+	prt_vpp(pp_out);
+	// save denominator and raise exponents by power
+	denominator = pp_out;
+	
+	for(vpp::iterator pp = denominator.begin(); pp != denominator.end(); ++pp) pp->second = pp->second*power;
+	
+	ul hi_prime = pp_out.back().first;
+	cout << "hi prime " << hi_prime << endl;
+	
+	// initial value for n will be i * power = 3720 - hi_prime
+	// search for value < n | pp_out
+	
+	for(ul n = ((i*power) - hi_prime); n >= 3500; n -= hi_prime){
+		generate_descriptors(primes, n, pp_in);
+		legendre(pp_in, n, pp_out);	
+		cout << "Prime factors of " << n << endl;
+		prt_vpp(pp_out);
+		cout << "denominator" << endl;
+		prt_vpp(denominator);		
+		cout << endl;
 	}
+		
 	return 0;	// as required by standard
 }
 
