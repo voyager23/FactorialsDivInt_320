@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 	// Checking a range of values
 	vector<ul>primes;	// Required by Sieve
 	SieveOfEratosthenes(primes, 1001);
-	vpp pp_in, pp_out, denominator;
+	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
 	ul i = 62;
@@ -86,39 +86,57 @@ int main(int argc, char **argv)
 	generate_descriptors(primes, i, pp_in);
 	legendre(pp_in, i, pp_out);
 	
-	cout << "Prime factors of " << i << endl;
-	prt_vpp(pp_in);
-	cout << i << "! ^ " << power << endl;
-	prt_vpp(pp_out);
-	// save denominator and raise exponents by power
-	denominator = pp_out;
+	//~ cout << "Prime factors of " << i << endl;
+	//~ prt_vpp(pp_in);
+	//~ cout << i << "! ^ " << power << endl;
+	//~ prt_vpp(pp_out);
+	// save const_denom and raise exponents by power
+	const_denom = pp_out;
 	
-	for(vpp::iterator pp = denominator.begin(); pp != denominator.end(); ++pp) pp->second = pp->second*power;
+	for(vpp::iterator pp = const_denom.begin(); pp != const_denom.end(); ++pp) pp->second = pp->second*power;
 	
 	ul hi_prime = pp_out.back().first;
-	cout << "hi prime " << hi_prime << endl;
+	cout << "hi prime " << hi_prime << endl << endl;
 	
 	// initial value for n will be i * power = 3720 - hi_prime
 	// search for value < n | pp_out
 	
-	for(ul n = ((i*power) - hi_prime); n >= 3500; n -= hi_prime){
-		generate_descriptors(primes, n, pp_in);
-		legendre(pp_in, n, pp_out);	
+	//~ for(ul n = ((i*power)); n >= 3500; n -= hi_prime){
+		//~ generate_descriptors(primes, n, pp_in);
+		//~ legendre(pp_in, n, pp_out);	
+		//~ cout << "Prime factors of " << n << endl;
+		//~ prt_vpp(pp_out);
+		//~ cout << "const_denom" << endl;
+		//~ prt_vpp(const_denom);		
+		//~ cout << endl;
+	//~ }
+	ul n = (i*power);
+	ul minimum_soln = n;
+	do{
+		generate_descriptors(primes,n,pp_in);
+		legendre(pp_in,n,pp_out);
+		
 		cout << "Prime factors of " << n << endl;
 		prt_vpp(pp_out);
-		cout << "denominator" << endl;
-		prt_vpp(denominator);		
+		cout << "const_denom" << endl;
+		prt_vpp(const_denom);		
 		cout << endl;
-	}
+		vpp::iterator hip;
+		for(hip = pp_out.begin(); hip != pp_out.end(); ++hip) if (hip->first == hi_prime) break;
 		
+		if(hip != pp_out.end()){ // found hi_prime
+			if(is_divisible(pp_out, const_denom)and(hip->second >= const_denom.back().second)){				
+				minimum_soln = n;
+			} else {
+				if(hip->second < const_denom.back().second){
+					cout << "Search limit. Min n = " << minimum_soln << endl;
+					break;
+				}
+			}
+		}
+		n -= hi_prime;
+	}while(1);
+
 	return 0;	// as required by standard
 }
-
-
-
-
-
-
-
-
 
