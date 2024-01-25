@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
-	ul i = 62;
+	ul i = 49;
 	ul power = 60;
 	
 	generate_descriptors(primes, i, pp_in);
