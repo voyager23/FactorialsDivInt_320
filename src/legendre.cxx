@@ -86,11 +86,6 @@ int main(int argc, char **argv)
 	generate_descriptors(primes, i, pp_in);
 	legendre(pp_in, i, pp_out);
 	
-	//~ cout << "Prime factors of " << i << endl;
-	//~ prt_vpp(pp_in);
-	//~ cout << i << "! ^ " << power << endl;
-	//~ prt_vpp(pp_out);
-	// save const_denom and raise exponents by power
 	const_denom = pp_out;
 	
 	for(vpp::iterator pp = const_denom.begin(); pp != const_denom.end(); ++pp) pp->second = pp->second*power;
@@ -98,18 +93,6 @@ int main(int argc, char **argv)
 	ul hi_prime = pp_out.back().first;
 	cout << "hi prime " << hi_prime << endl << endl;
 	
-	// initial value for n will be i * power = 3720 - hi_prime
-	// search for value < n | pp_out
-	
-	//~ for(ul n = ((i*power)); n >= 3500; n -= hi_prime){
-		//~ generate_descriptors(primes, n, pp_in);
-		//~ legendre(pp_in, n, pp_out);	
-		//~ cout << "Prime factors of " << n << endl;
-		//~ prt_vpp(pp_out);
-		//~ cout << "const_denom" << endl;
-		//~ prt_vpp(const_denom);		
-		//~ cout << endl;
-	//~ }
 	ul n = (i*power);
 	ul minimum_soln = n;
 	do{
