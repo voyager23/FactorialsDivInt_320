@@ -118,22 +118,17 @@ int main(int argc, char **argv)
 		cout << "const_denom" << endl;
 		prt_vpp(const_denom);		
 		cout << endl;
-		vpp::iterator hip;
-		for(hip = pp_out.begin(); hip != pp_out.end(); ++hip) if (hip->first == hi_prime) break;
 		
-		if(hip != pp_out.end()){ // found hi_prime
-			if(is_divisible(pp_out, const_denom)and(hip->second >= const_denom.back().second)){				
-				minimum_soln = n;
-			} else {
-				if(hip->second < const_denom.back().second){
-					cout << "Search limit. Min n = " << minimum_soln << endl;
-					break;
-				}
-			}
-		}
+		int result = test_num_den(pp_out, const_denom, hi_prime);
+		if(result==+1) break;	// hard fail - break out of do/while
+		if(result==0) minimum_soln = n;	// update and continue;
+		if(result==-1);	// soft fail - continue
 		n -= hi_prime;
+		
 	}while(1);
-
+	
+	cout << "Minimum solution: " << minimum_soln << endl;
+	
 	return 0;	// as required by standard
 }
 
