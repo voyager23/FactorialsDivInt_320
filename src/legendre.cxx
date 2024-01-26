@@ -94,20 +94,20 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
-	ul i = 82;
+	ul i = 39;
 	ul power = 60;
 	
 	generate_descriptors(primes, i, pp_in);
 	legendre(pp_in, i, pp_out);
 	
 	const_denom = pp_out;
-	ul hi_prime = 1;
+	ul prime_multiple = 1;
 	for(vpp::iterator pp = const_denom.begin(); pp != const_denom.end(); ++pp){
-		hi_prime *= pp->first;
+		prime_multiple *= pp->first;
 		pp->second = pp->second*power;
 	}
 		
-	cout << "hi prime " << hi_prime << endl << endl;
+	cout << "prime_multiple " << prime_multiple << endl << endl;
 	
 	ul n = (i*power);
 	ul minimum_soln = n;
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 		cout << "const_denom" << endl;
 		prt_vpp(const_denom);		
 		cout << endl;
-		//~ int result = test_num_den(pp_out, const_denom, hi_prime);
+		//~ int result = test_num_den(pp_out, const_denom, prime_multiple);
 		//~ if(result==+1) break;	// hard fail - break out of do/while
 		//~ if(result==0) minimum_soln = n;	// update and continue;
 		//~ if(result==-1);	// soft fail - continue
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 		//~ If any exponent in numerator is less than the corresponding exponent break
 		if (is_divisible(pp_out, const_denom)==false) break;
 		minimum_soln = n;		
-		n -= hi_prime;		
+		n -= prime_multiple;		
 	}while(1);
 	
 	cout << "Minimum solution: " << minimum_soln << endl;
