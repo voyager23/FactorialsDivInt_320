@@ -29,7 +29,8 @@
 using namespace std;
 typedef vector<PrimePower> vpp;
 void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out);
-bool num_isdivisible_den(vector<PrimePower> num, vector<PrimePower> den);
+bool isdivisible(vector<PrimePower> num, vector<PrimePower> den);
+int test_num_den(vpp num, vpp den);
 
 // debug functions
 void prt_vpp(vpp z);
@@ -65,6 +66,19 @@ bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
 	}
 	return true;
 }
+
+int test_num_den(vpp num, vpp den, ul hi_prime){
+
+	// if hi_prime_exp_num < hi_prime_exp_den return +1 hard fail
+	vpp::iterator hip;
+	for(hip = num.begin(); hip != num.end(); ++hip) if (hip->first == hi_prime) break;
+	if((hip != num.end())and(hip->second < den.back().second )) return +1; // hard fail
+	if(is_divisible(num,den)) return 0; //update solution
+	return -1; // soft fail - continue to search
+}
+
+
+
 void prt_vpp(vpp z){
 	for(auto pp : z) cout << pp.first << "^" << pp.second << "  ";
 	cout << endl;
@@ -80,7 +94,7 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
-	ul i = 49;
+	ul i = 231;
 	ul power = 60;
 	
 	generate_descriptors(primes, i, pp_in);
