@@ -37,18 +37,20 @@ void prt_vpp(vpp z);
 
 // -----------------------------------------------------------------------
 
-void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
+void legendre(vector<ul> &primes, ul n, vector<PrimePower>&pp_out){
+	// Corrected version 27/01/24
 	ul sum, divisor, r;
 	pp_out.clear();
-	for(auto pp : pp_in){
+	for(auto pp : primes){
 		sum = 0;
-		divisor = pp.first;
+		divisor = pp;
+		if (divisor > n) break;
 		do {
 			r = floor(n/divisor);	//floor imported via toolbox.hxx
-			divisor *= pp.first;
+			divisor *= pp;
 			sum += r;			
 		} while (r != 0);
-		pp_out.push_back(make_pair(pp.first, sum));
+		pp_out.push_back(make_pair(pp, sum));
 	}
 }
 

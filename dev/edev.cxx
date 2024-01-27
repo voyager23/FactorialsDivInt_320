@@ -28,27 +28,31 @@
 
 using namespace std;
 typedef vector<PrimePower> vpp;
-void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out);
+void legendre(vector<ul> &primes, ul n, vector<PrimePower>&pp_out);
 bool isdivisible(vector<PrimePower> num, vector<PrimePower> den);
 int test_num_den(vpp num, vpp den);
 
 // debug functions
 void prt_vpp(vpp z);
 
-// -----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
-void legendre(vector<PrimePower>&pp_in, ul n, vector<PrimePower>&pp_out){
+void legendre(vector<ul> &primes, ul n, vector<PrimePower>&pp_out){
+	// Corrected version 27/01/24
 	ul sum, divisor, r;
 	pp_out.clear();
-	for(auto pp : pp_in){
+	for(auto pp : primes){
 		sum = 0;
-		divisor = pp.first;
+		divisor = pp;
+		// DEBUG ONLY DO NOT USE
+		if (divisor > 56) break;
+		// DEBUG ONLY DO NOT USE
 		do {
 			r = floor(n/divisor);	//floor imported via toolbox.hxx
-			divisor *= pp.first;
+			divisor *= pp;
 			sum += r;			
 		} while (r != 0);
-		pp_out.push_back(make_pair(pp.first, sum));
+		pp_out.push_back(make_pair(pp, sum));
 	}
 }
 
@@ -94,18 +98,19 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
-	ul i = 13;
-	generate_descriptors(primes, i, pp_in);
-	legendre(pp_in, i, const_denom);
+	ul i = 56;
+	//generate_descriptors(primes, i, pp_in);
+	legendre(primes, i, const_denom);
 	
-	for(ul i = 13; i > 1; --i){
-		generate_descriptors(primes, i, pp_in);
-		legendre(pp_in, i, pp_out);
+	for(ul i = 672; i > 640; --i){
+		//generate_descriptors(primes, i, pp_in);
+		legendre(primes, i, pp_out);
 		cout << i << "! -> ";
 		prt_vpp(pp_out);
-		cout << "\t";
+		cout << "denominator"<<endl;
 		prt_vpp(const_denom);
 		cout << endl;
+		break;
 	}
 	
 
