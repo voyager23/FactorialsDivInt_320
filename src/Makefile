@@ -1,5 +1,10 @@
 # makefile template
 
+TARGET=edev
+	
+edev : edev.cxx
+	g++ -std=c++17 -g edev.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
+	
 legendre : legendre.cxx
 	g++ -std=c++17 -g legendre.cxx ../obj/toolbox.o -o ../bin/legendre
 	
@@ -18,7 +23,7 @@ adev : adev.cxx
 phoney : run gdb
 
 run:
-	../bin/legendre
+	../bin/$(TARGET)
 	
 gdb:
-	gdb ../bin/legendre
+	gdb ../bin/$(TARGET)

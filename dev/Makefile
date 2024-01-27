@@ -1,10 +1,15 @@
 # makefile template
 
-ddev : ddev.cxx
-	g++ -std=c++17 -g ddev.cxx ../obj/toolbox.o -o ../bin/ddev
+TARGET=edev
 	
-cdev : cdev.cxx
-	g++ -std=c++17 -g cdev.cxx ../obj/toolbox.o -o ../bin/cdev
+edev : edev.cxx
+	g++ -std=c++17 -g edev.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
+	
+legendre : legendre.cxx
+	g++ -std=c++17 -g legendre.cxx ../obj/toolbox.o -o ../bin/legendre
+	
+ddevloop : ddevloop.cxx
+	g++ -std=c++17 -g ddevloop.cxx ../obj/toolbox.o -o ../bin/ddevloop
 	
 bdev : bdev.cxx
 	g++ -std=c++17 -g bdev.cxx ../obj/toolbox.o -o ../bin/bdev
@@ -15,7 +20,10 @@ adev : adev.cxx
 ../obj/toolbox.o : ../ToolBox/toolbox.cxx
 	g++ -std=c++17 -c ../ToolBox/toolbox.cxx -o ../obj/toolbox.o
 
-phoney : run
+phoney : run gdb
 
 run:
-	../bin/ddev
+	../bin/$(TARGET)
+	
+gdb:
+	gdb ../bin/$(TARGET)

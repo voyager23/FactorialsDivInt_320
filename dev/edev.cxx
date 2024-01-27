@@ -94,45 +94,21 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i (62) and power
-	ul i = 56;
-	ul power = 12;
-	
+	ul i = 13;
 	generate_descriptors(primes, i, pp_in);
-	legendre(pp_in, i, pp_out);
+	legendre(pp_in, i, const_denom);
 	
-	const_denom = pp_out;
-	ul hi_prime = 1;
-	for(vpp::iterator pp = const_denom.begin(); pp != const_denom.end(); ++pp){
-		hi_prime *= pp->first;
-		pp->second = pp->second*power;
-	}
-		
-	cout << "hi prime " << hi_prime << endl << endl;
-	
-	ul n = (i*power);
-	ul minimum_soln = n;
-	do{
-		generate_descriptors(primes,n,pp_in);
-		legendre(pp_in,n,pp_out);
-		
-		cout << "Prime factors of " << n << "!" << endl;
+	for(ul i = 13; i > 1; --i){
+		generate_descriptors(primes, i, pp_in);
+		legendre(pp_in, i, pp_out);
+		cout << i << "! -> ";
 		prt_vpp(pp_out);
-		cout << "const_denom" << endl;
-		prt_vpp(const_denom);		
+		cout << "\t";
+		prt_vpp(const_denom);
 		cout << endl;
-		//~ int result = test_num_den(pp_out, const_denom, hi_prime);
-		//~ if(result==+1) break;	// hard fail - break out of do/while
-		//~ if(result==0) minimum_soln = n;	// update and continue;
-		//~ if(result==-1);	// soft fail - continue
-		
-		//~ If any exponent in numerator is less than the corresponding exponent break
-		if (is_divisible(pp_out, const_denom)==false) break;
-		minimum_soln = n;		
-		n -= hi_prime;		
-	}while(1);
+	}
 	
-	cout << "Minimum solution: " << minimum_soln << endl;
-	
+
 	return 0;	// as required by standard
 }
 
