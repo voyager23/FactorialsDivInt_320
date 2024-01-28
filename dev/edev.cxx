@@ -93,26 +93,36 @@ void prt_vpp(vpp z, ul hi_prime){
 
 int main(int argc, char **argv)
 {
+	
 	// Checking a range of values
 	vector<ul>primes;	// Required by Sieve
 	SieveOfEratosthenes(primes, 1001);
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i and power
-	ul i = 420;
-	ul power = 1273;
+	ul i = 13;
+	ul power = 3;
 	legendre(primes, i, const_denom);
 	//multiply exponents by power -> const_denom => (i!)^power
 	for(auto pp = const_denom.begin(); pp != const_denom.end(); ++pp) pp->second *= power;
 	const ul hi_prime = const_denom.back().first;
 	
+	ul result = 0;
 	for(ul j = i*power; j > 0; j -= 2){
 		legendre(primes, j, pp_out);
-		cout << "------" << j << "!------" << endl;
-		prt_vpp(pp_out,hi_prime);
-		cout << "------denominator------"<<endl;
+		cout << "------testing numerator "<< j <<"!------" << endl;
+		prt_vpp(pp_out);
+		cout << "------denominator------"<<endl;	// (i!)^power
+		cout << "("<<i<<"!)^"<<power<<endl;
 		prt_vpp(const_denom);
-		if(is_divisible(pp_out,const_denom)==false) break;
+		if(is_divisible(pp_out,const_denom)==false) {
+			cout << "result: " << result << endl;
+			cout << i*power << endl;
+			break;
+		}
+		else {
+			result = j;
+		}
 		cout << endl;
 	}
 	
