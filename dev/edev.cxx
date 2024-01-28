@@ -42,11 +42,9 @@ void legendre(vector<ul> &primes, ul n, vector<PrimePower>&pp_out){
 	ul sum, divisor, r;
 	pp_out.clear();
 	for(auto pp : primes){
+		if (pp > n) break;
 		sum = 0;
 		divisor = pp;
-		// DEBUG ONLY DO NOT USE
-		if (divisor > 56) break;
-		// DEBUG ONLY DO NOT USE
 		do {
 			r = floor(n/divisor);	//floor imported via toolbox.hxx
 			divisor *= pp;
@@ -97,20 +95,20 @@ int main(int argc, char **argv)
 	SieveOfEratosthenes(primes, 1001);
 	vpp pp_in, pp_out, const_denom;
 	
-	// inputs are i (62) and power
-	ul i = 56;
-	//generate_descriptors(primes, i, pp_in);
+	// inputs are i and power
+	ul i = 16;
+	ul power = 2;
 	legendre(primes, i, const_denom);
+	//multiply exponents by power -> const_denom => (i!)^power
+	for(auto pp = const_denom.begin(); pp != const_denom.end(); ++pp) pp->second *= power;
 	
-	for(ul i = 672; i > 640; --i){
-		//generate_descriptors(primes, i, pp_in);
-		legendre(primes, i, pp_out);
-		cout << i << "! -> ";
+	for(ul j = 48; j > 25; --j){
+		legendre(primes, j, pp_out);
+		cout << j << "!" << endl;
 		prt_vpp(pp_out);
-		cout << "denominator"<<endl;
+		cout << "------denominator------"<<endl;
 		prt_vpp(const_denom);
 		cout << endl;
-		break;
 	}
 	
 

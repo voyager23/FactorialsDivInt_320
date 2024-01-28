@@ -1,0 +1,20 @@
+../bin/legendre
+Starting Sieve for n = 1001...Completed Sieve
+hi prime 14
+
+Prime factors of 672!
+2^669  3^332  7^110  
+const_denom
+2^636  7^108  
+
+Prime factors of 658!
+2^654  7^108  47^14  
+const_denom
+2^636  7^108  
+
+Prime factors of 644!
+2^641  7^106  23^29  
+const_denom
+2^636  7^108  
+
+Minimum solution: 658
