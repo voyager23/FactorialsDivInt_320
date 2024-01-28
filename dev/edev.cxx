@@ -33,7 +33,7 @@ bool isdivisible(vector<PrimePower> num, vector<PrimePower> den);
 int test_num_den(vpp num, vpp den);
 
 // debug functions
-void prt_vpp(vpp z);
+void prt_vpp(vpp z, const ul hi_prime = 0);
 
 // ----------------------------------------------------------------------
 
@@ -61,8 +61,8 @@ bool is_divisible(vector<PrimePower> num, vector<PrimePower> den){
 	while(iden != den.end()){ // Outer loop
 		inum = num.begin();
 		while((inum != num.end())and(inum->first != iden->first)) ++inum;
-		if (inum == num.end()) return false;
-		if (inum->second < iden->second) return false;
+		if ((inum == num.end()) or (inum->second < iden->second)) { 
+			cout<<"Fail @ "<<iden->first<<"^"<<iden->second<<endl; return false;}
 		// check next prime in denominator
 		++iden;
 	}
@@ -81,8 +81,11 @@ int test_num_den(vpp num, vpp den, ul hi_prime){
 
 
 
-void prt_vpp(vpp z){
-	for(auto pp : z) cout << pp.first << "^" << pp.second << "  ";
+void prt_vpp(vpp z, ul hi_prime){
+	for(auto pp : z) {
+		if((hi_prime > 0)and(pp.first > hi_prime)) break;
+		cout << pp.first << "^" << pp.second << "  ";
+	}
 	cout << endl;
 }
 
@@ -96,18 +99,20 @@ int main(int argc, char **argv)
 	vpp pp_in, pp_out, const_denom;
 	
 	// inputs are i and power
-	ul i = 16;
-	ul power = 2;
+	ul i = 420;
+	ul power = 1273;
 	legendre(primes, i, const_denom);
 	//multiply exponents by power -> const_denom => (i!)^power
 	for(auto pp = const_denom.begin(); pp != const_denom.end(); ++pp) pp->second *= power;
+	const ul hi_prime = const_denom.back().first;
 	
-	for(ul j = 48; j > 25; --j){
+	for(ul j = i*power; j > 0; j -= 2){
 		legendre(primes, j, pp_out);
-		cout << j << "!" << endl;
-		prt_vpp(pp_out);
+		cout << "------" << j << "!------" << endl;
+		prt_vpp(pp_out,hi_prime);
 		cout << "------denominator------"<<endl;
 		prt_vpp(const_denom);
+		if(is_divisible(pp_out,const_denom)==false) break;
 		cout << endl;
 	}
 	
