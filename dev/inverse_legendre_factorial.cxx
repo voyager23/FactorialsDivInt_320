@@ -25,13 +25,14 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <cmath>
 #include "../inc/toolbox.hxx"
 
 using namespace std;
 
 // Uses bisection method
 ul inverse_legendre_factorial(ul p, ul e);	//Finds smallest number, n, such that p^e divides n!
-ul modified_legendre_factorial(ul n, ul p);	// find number of factors of p in n!
+ul modified_legendre_factorial(const ul n, ul p);	// find number of factors of p in n!
 
 ul inverse_legendre_factorial(ul p, ul e){
 	//Finds smallest number, n, such that p^e divides n!
@@ -40,25 +41,28 @@ ul inverse_legendre_factorial(ul p, ul e){
 	ul mid = 0;
 	while((high-low) > 1){
 		mid = (high+low)/2;
-		if (modified_legendre_factorial(mid,p) > e)
+		if (modified_legendre_factorial(mid,p) >= e)
 			high = mid;
 		else
 			low = mid;
 	}
+	
 	if (modified_legendre_factorial(low,p) >= e)
 		return low;
 	else
 		return high;
 }
 
-ul modified_legendre_factorial(ul n, ul p){
+ul modified_legendre_factorial(const ul n, ul p){
 	// find number of factors of p in n!
 	ul r, sum = 0;
+	ul divisor = p;
 	if(p <= n){
 		do{
-			ul r = floor(n/p);
-			p *= p;
+			r = (ul)(n/divisor);	// integer arithmetic
+			divisor *= p;
 			sum += r;
+			//cout << n << " " << divisor << " " << r << endl;
 		}while(r != 0);
 	}
 	return sum;
@@ -66,7 +70,9 @@ ul modified_legendre_factorial(ul n, ul p){
 
 int main(int argc, char **argv)
 {
-	
+	const ul power = 1234567890;
+	cout << inverse_legendre_factorial(5, power*2) << endl;
+	//cout << "foobar" << endl;
 	return 0;
 }
 
