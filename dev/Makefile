@@ -1,7 +1,11 @@
 # makefile template
 
-TARGET=edev
+TARGET=inverse_legendre_factorial
 	
+inverse_legendre_factorial : inverse_legendre_factorial.cxx
+	g++ -std=c++17 -g inverse_legendre_factorial.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
+	
+# --------------------------------------------------------------------
 edev : edev.cxx
 	g++ -std=c++17 -g edev.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
 	
@@ -19,6 +23,7 @@ adev : adev.cxx
 
 ../obj/toolbox.o : ../ToolBox/toolbox.cxx
 	g++ -std=c++17 -c ../ToolBox/toolbox.cxx -o ../obj/toolbox.o
+# ------------------------------------------------------------------
 
 phoney : run gdb
 
