@@ -31,11 +31,12 @@
 #include "../inc/toolbox.hxx"
 
 using namespace std;
+typedef std::tuple<ul,ul,ul> pepf; // prime, exponent, power_factor
 
 // Uses bisection method
 ul inverse_legendre_factorial(ul p, ul e);	//Finds smallest number, n, such that p^e divides n!
 ul modified_legendre_factorial(const ul n, ul p);	// find number of factors of p in n!
-bool comp(tuple<ul,ul,ul> a,tuple<ul,ul,ul>);
+bool comp(pepf a,pepf);
  
 ul inverse_legendre_factorial(ul p, ul e){
 	//Finds smallest number, n, such that p^e divides n!
@@ -71,38 +72,58 @@ ul modified_legendre_factorial(const ul n, ul p){
 	return sum;
 }
 
-bool comp(tuple<ul,ul,ul> a,tuple<ul,ul,ul> b){
+bool comp(pepf a,pepf b){
 	//return true iff a < b
 	return (get<2>(a) < get<2>(b));
+	}
+	
+ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul &current_factorial);
+ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul &current_factorial){
+	PfactOfN pfofn;
+	current_factorial += 1;
+	generate_descriptors(primes, current_factorial, pfofn);
+	// for each descriptor:
+	//		if prime not found:
+	//			current_nfact.push_back(tuple(prime, exponent, 0))
+	//		else
+	//			add exponents
+	//			set power factor = 0	{changed}
+	//
+	// rescan and update any zero power factors
+	// finally return maximum power factor
+	return 0;
 	}
 
 int main(int argc, char **argv)
 {
-	tuple<ul,ul,ul> temp;
-	vector<tuple<ul,ul,ul>> current_nfact;
+	pepf temp;
+	vector<pepf> current_nfact;
+	ul current_factorial = 9;
 	const ul power = 1234567890;
 	
-	cout << inverse_legendre_factorial(2, power*7) << endl;
+	// Checking a range of values
+	vector<ul>primes;	// Required by Sieve
+	SieveOfEratosthenes(primes, 1000001);
+	
+	// Setup currrent_nfact for 9! 2^7, 3^4, 5^1, 7^1
+	//cout << inverse_legendre_factorial(2, power*7) << endl;
 	temp = make_tuple(2,7,inverse_legendre_factorial(2, power*7));
 	current_nfact.push_back(temp);
-	
-	cout << inverse_legendre_factorial(3, power*4) << endl;
+	//cout << inverse_legendre_factorial(3, power*4) << endl;
 	temp = make_tuple(3,4,inverse_legendre_factorial(3, power*4));
 	current_nfact.push_back(temp);
-
-	cout << inverse_legendre_factorial(5, power*1) << endl;
+	//cout << inverse_legendre_factorial(5, power*1) << endl;
 	temp = make_tuple(5,1,inverse_legendre_factorial(5, power*1));
 	current_nfact.push_back(temp);
-
-	cout << inverse_legendre_factorial(7, power*1) << endl;
+	//cout << inverse_legendre_factorial(7, power*1) << endl;
 	temp = make_tuple(7,1,inverse_legendre_factorial(7, power*1));
 	current_nfact.push_back(temp);
-	
-	for(auto a : current_nfact)
-		cout << get<0>(a) << " " << get<1>(a) << " " << get<2>(a) << endl;
-	vector<tuple<ul,ul,ul>>::iterator result;
+	// Display current_nfact
+	//for(auto a : current_nfact)
+		//cout << get<0>(a) << " " << get<1>(a) << " " << get<2>(a) << endl;
+	vector<pepf>::iterator result;
 	result = max_element(current_nfact.begin(), current_nfact.end(), comp);
-	cout << "maximum: " << get<2>(*result) << endl;
+	cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
 			
 
 	return 0;
