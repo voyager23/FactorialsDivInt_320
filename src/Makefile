@@ -1,6 +1,9 @@
 # makefile template
 
-TARGET=edev
+TARGET=S1000
+	
+S1000 : S1000.cxx
+	g++ -std=c++17 -O2 S1000.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
 	
 edev : edev.cxx
 	g++ -std=c++17 -g edev.cxx ../obj/toolbox.o -o ../bin/$(TARGET)

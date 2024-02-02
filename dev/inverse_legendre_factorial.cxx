@@ -107,7 +107,7 @@ ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul
 		} else {
 			get<1>(*p) += get<1>(*d); //add exponent
 			// calc new power factor using prime and adjusted exponent 
-			get<2>(*p) == inverse_legendre_factorial(get<0>(*p), get<1>(*p)*1234567890);
+			get<2>(*p) = inverse_legendre_factorial(get<0>(*p), get<1>(*p)*1234567890);
 		}
 		
 	}
@@ -140,24 +140,21 @@ int main(int argc, char **argv)
 	//cout << inverse_legendre_factorial(7, power*1) << endl;
 	temp = make_tuple(7,1,inverse_legendre_factorial(7, power*1));
 	current_nfact.push_back(temp);
-	// Display current_nfact
-	//for(auto a : current_nfact)
-		//cout << get<0>(a) << " " << get<1>(a) << " " << get<2>(a) << endl;
+	// 9! - not included in sum
 	vector<pepf>::iterator result;
 	result = max_element(current_nfact.begin(), current_nfact.end(), comp);
 	cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
-	//10!
-	advance_current_factorial(primes, current_nfact, current_factorial);
-	result = max_element(current_nfact.begin(), current_nfact.end(), comp);
-	cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
-	//11!
-	advance_current_factorial(primes, current_nfact, current_factorial);
-	result = max_element(current_nfact.begin(), current_nfact.end(), comp);
-	cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
-	//12!
-	advance_current_factorial(primes, current_nfact, current_factorial);
-	result = max_element(current_nfact.begin(), current_nfact.end(), comp);
-	cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
+	
+	ul S = 0;
+	for(ul i = 10; i != 1001; ++i){
+		advance_current_factorial(primes, current_nfact, current_factorial);
+		result = max_element(current_nfact.begin(), current_nfact.end(), comp);
+		cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
+		S += get<2>(*result);
+	}
+	
+	cout << "Final S() = " << S << endl;
+
 	
 	return 0;
 }
