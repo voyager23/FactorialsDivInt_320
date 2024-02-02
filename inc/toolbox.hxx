@@ -35,6 +35,7 @@
 	#define NL std::cout<<std::endl
 	
 	typedef uint64_t ul;
+
 	// required by CalcS
 	typedef struct{
 		ul prime, power, pxp;

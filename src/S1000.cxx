@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  * 
+ * S(100000)   = 6172360737804266019 	19 digits
+ * 
+ * S(1000000)  = 617 278157919195482643
+ * 
+ * S(10000000) = 61728327266010338190906
  * 
  */
 
@@ -28,6 +33,7 @@
 #include <cmath>
 #include <tuple>
 #include <algorithm>
+#include <cstdint>
 #include "../inc/toolbox.hxx"
 
 using namespace std;
@@ -146,12 +152,13 @@ int main(int argc, char **argv)
 	//cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
 	
 	ul S = 0;
-	for(ul i = 999; i != 1000001; ++i){
+	for(ul i = 10; i <= 1000000; ++i){
 		advance_current_factorial(primes, current_nfact, current_factorial);
 		result = max_element(current_nfact.begin(), current_nfact.end(), comp);
 		//cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
 		S += get<2>(*result);
 		// mod 10^18
+		//S = S % 10000000000;
 		S = S % 1000000000000000000;
 	}
 	
