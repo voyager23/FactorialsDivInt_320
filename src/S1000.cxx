@@ -34,6 +34,8 @@
 #include <tuple>
 #include <algorithm>
 #include <cstdint>
+#include <array>
+#include <unordered_map>
 #include "../inc/toolbox.hxx"
 
 using namespace std;
@@ -45,6 +47,9 @@ ul modified_legendre_factorial(const ul n, ul p);	// find number of factors of p
 ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul &current_factorial);
 bool comp(pepf a,pepf);
 bool find_prime(pepf a, pepf b);
+
+// Global constant
+const ul power = 1234567890;
 
 ul inverse_legendre_factorial(ul p, ul e){
 	//Finds smallest number, n, such that p^e divides n!
@@ -93,27 +98,22 @@ bool find_prime(pepf a, pepf b){
 ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul &current_factorial){
 	PfactOfN pfofn;	// vector of PrimePowers
 	PfactOfN::iterator pp;
+	vector<pepf>::iterator p;
+	
 	current_factorial += 1;	// next factorial
 	generate_descriptors(primes, current_factorial, pfofn);
-	// for each descriptor:
-	//		if prime not found in current_nfact:  vector prime, exponent, power_factor
-	//			current_nfact.push_back(tuple(prime, exponent, 0))
-	//		else
-	//			add exponents
-	//			set power factor = 0	{changed}
-	//
-	// finally return maximum power factor
+	
 	for(auto d = pfofn.begin(); d != pfofn.end(); ++d){ // vector of prime/powers
-		vector<pepf>::iterator p;
+
 		for(p = current_nfact.begin(); p != current_nfact.end(); ++p) if (get<0>(*d) == get<0>(*p)) break;
 		
 		if (p == current_nfact.end()){ // new prime
 			// calc the new power factor using prime and power				
-			current_nfact.push_back(make_tuple(d->first, d->second, inverse_legendre_factorial(d->first, d->second*1234567890)));
+			current_nfact.push_back(make_tuple(d->first, d->second, inverse_legendre_factorial(d->first, d->second*power)));
 		} else {
 			get<1>(*p) += get<1>(*d); //add exponent
 			// calc new power factor using prime and adjusted exponent 
-			get<2>(*p) = inverse_legendre_factorial(get<0>(*p), get<1>(*p)*1234567890);
+			get<2>(*p) = inverse_legendre_factorial(get<0>(*p), get<1>(*p)*power);
 		}
 		
 	}
@@ -125,9 +125,9 @@ ul advance_current_factorial(vector<ul> &primes, vector<pepf> &current_nfact, ul
 int main(int argc, char **argv)
 {
 	pepf temp;
-	vector<pepf> current_nfact;
+	vector<pepf> current_nfact;	// vector of tuples prime, exponent & 'power factor'
 	ul current_factorial = 9;
-	const ul power = 1234567890;
+
 	
 	// Checking a range of values
 	vector<ul>primes;	// Required by Sieve
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 	//cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
 	
 	ul S = 0;
-	for(ul i = 10; i <= 1000000; ++i){
+	for(ul i = 10; i <= 100; ++i){
 		advance_current_factorial(primes, current_nfact, current_factorial);
 		result = max_element(current_nfact.begin(), current_nfact.end(), comp);
 		//cout << current_factorial << "! has maximum_power_factor: " << get<2>(*result) << endl;
@@ -164,6 +164,24 @@ int main(int argc, char **argv)
 	
 	cout << "Final S() =    " << S << endl;
 	cout << "Solution: #320 278157919195482643" << endl;
+	cout << current_nfact.size() << endl;
+	std::unordered_map<ul,array<ul,2>> mymap;
+	for(auto t : current_nfact){
+		cout << get<0>(t) << " "<< get<1>(t) << " "<< get<2>(t) << endl;
+		mymap.emplace(make_pair(get<0>(t), array<ul,2> {get<1>(t), get<2>(t)}));
+	}
+	
+	//~ find prime 37
+	//~ report exponent & powerfactor
+	
+	auto it = mymap.find(37);
+	if(it != mymap.end()){
+		cout << "found  " << it->second[0] << "  " << it->second[1];
+	} else {
+		cout << "not found  ";
+	}
+	cout << endl;
+	
 
 	
 	return 0;
