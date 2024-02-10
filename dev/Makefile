@@ -1,9 +1,9 @@
 # makefile template
 
-TARGET=inverse_legendre_factorial
+TARGET=S3000
 	
-inverse_legendre_factorial : inverse_legendre_factorial.cxx
-	g++ -std=c++17 -g inverse_legendre_factorial.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
+S3000 : S3000.cxx
+	g++ -std=c++17 -g S3000.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
 	
 # --------------------------------------------------------------------
 edev : edev.cxx

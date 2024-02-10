@@ -1,10 +1,11 @@
 # makefile template
 
-TARGET=S1000
+TARGET=S3000
 	
-S1000 : S1000.cxx
-	g++ -std=c++17 -O2 S1000.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
+S3000 : S3000.cxx
+	g++ -std=c++17 -g S3000.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
 	
+# --------------------------------------------------------------------
 edev : edev.cxx
 	g++ -std=c++17 -g edev.cxx ../obj/toolbox.o -o ../bin/$(TARGET)
 	
@@ -22,6 +23,7 @@ adev : adev.cxx
 
 ../obj/toolbox.o : ../ToolBox/toolbox.cxx
 	g++ -std=c++17 -c ../ToolBox/toolbox.cxx -o ../obj/toolbox.o
+# ------------------------------------------------------------------
 
 phoney : run gdb
 
