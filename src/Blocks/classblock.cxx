@@ -43,6 +43,16 @@ void threadCallback(Tdata & x)
 	cout << x.n << " " << x.i << " " << x.S << endl;
 }
 
+class Cthread
+{
+	public:
+	Cthread() {};
+	void run(Tdata &x) {
+			cout << "class" << x.n << " " << x.i << " " << x.S << endl;
+	}
+
+};
+
 
 int main(int argc, char **argv)
 {
@@ -54,9 +64,12 @@ int main(int argc, char **argv)
 	
     std::thread t1(threadCallback,std::ref(v[0]));
     std::thread t2(threadCallback,std::ref(v[1]));
+    Cthread ct;
+    std::thread t3(&Cthread::run, &ct, std::ref(v[0]));
     
     t1.join();
     t2.join();
+    t3.join();
 	cout << "\ncomplete\n";
 	return 0;
 }
