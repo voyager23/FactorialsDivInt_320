@@ -34,10 +34,11 @@ using namespace std;
 using ul = uint64_t;
 
 // Basic list of primes
-vector<ul> vprime;	// Required by Sieve
+
 const ul modulus = 1e18;
 const ul power = 1234567890;
-		
+
+vector<ul> vprime;	// Required by Sieve		
 typedef struct
 {
 	ul n,i,S;
@@ -52,12 +53,12 @@ class Legendre
 		void run(Tdata &x) {
 				cout << "class legendre " << x.n << " " << x.i << " " << endl;
 				// initialise to 100! - Assume that smaller primes will be overwritten
-				generate_descriptors(x.primes, x.i, descriptors);
-				for(auto d = descriptors.begin(); d != descriptors.end(); ++d){
-					i_fact.push_back(make_pair(d->first, d->second));
-					local_n_min = inverse_legendre_factorial(d->first, d->second*1234567890);
-					if ( local_n_min > n_min) n_min = local_n_min;
-				} // Next descriptor prime;
+				generate_descriptors(x.primes, x.i, i_fact);
+				//~ for(auto d = descriptors.begin(); d != descriptors.end(); ++d){
+					//~ i_fact.push_back(make_pair(d->first, d->second));
+					//~ local_n_min = inverse_legendre_factorial(d->first, d->second*1234567890);
+					//~ if ( local_n_min > n_min) n_min = local_n_min;
+				//~ } // Next descriptor prime;
 				
 				//DEBUG
 				for(auto pp : i_fact) cout << pp.first << "^" << pp.second << endl;	
@@ -66,7 +67,7 @@ class Legendre
 	private:
 	
 		vector<pair<ul,ul>> descriptors;	// pair< prime, exponent >
-		vector<pair<ul,ul>> i_fact;
+		vector<pair<ul,ul>> i_fact;			
 		ul local_n_min, n_min;
 			
 		void legendre(vector<ul> &primes, ul n, vector<pair<ul,ul>> pp_out){
@@ -127,12 +128,13 @@ int main(int argc, char **argv)
 	SieveOfEratosthenes(vprime, 1000001);
 	
     Legendre ct;
-    Tdata td1;
-    Tdata td2;
-    Tdata td3 = {1, 100, 0};
-    std::thread t3(&Legendre::run, &ct, std::ref(td3));
+    Tdata td3 = {1, 3600, 0};
+    array<Tdata,1> foo = {1, 3600,0};
     
-    t3.join();
+    vector<thread> vt;
+    vt.emplace_back(std::thread(&Legendre::run, &ct, std::ref(foo[0])));
+    for(auto x = vt.begin(); x != vt.end(); ++x) (*x).join();
+    
 	cout << "\ncomplete\n";
 	return 0;
 }
