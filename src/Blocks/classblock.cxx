@@ -28,6 +28,7 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <cstdint>
 #include "../../ToolBox/toolbox.hxx"
 
 using namespace std;
@@ -46,6 +47,8 @@ typedef struct
 	vector<ul> &primes = vprime;
 }Tdata;
 
+typedef vector<pair<ul,ul>> pair_vect;
+
 class Legendre
 {
 	public:
@@ -56,7 +59,7 @@ class Legendre
 				
 				cout << "class legendre " << x.start << " " << x.sentinel << " " << endl;
 				// initialise to 100! - Assume that smaller primes will be overwritten
-				generate_descriptors(x.primes, x.start, i_fact);
+				i_fact = gen_descript(x.start);
 				//DEBUG
 				for(auto pp : i_fact) cout << pp.first << "^" << pp.second << endl;
 								
@@ -69,9 +72,27 @@ class Legendre
 		
 	private:
 	
-		vector<pair<ul,ul>> descriptors;	// pair< prime, exponent >
-		vector<pair<ul,ul>> i_fact;			
+		pair_vect i_fact;			
 		ul local_n_min, n_min;
+		
+		pair_vect gen_descript(ul n){
+			pair_vect ppv;
+			vector<ul> primes = {2,3,5,7,11,13,17,19};
+			// Generates a vector of descriptors for integer n. Each element is a pair<prime, power>
+			std::pair<ul,ul> temp;
+			for(auto i = primes.begin(); i != primes.end(); ++i){
+				ul p = *i;
+				if(p > n) break;
+				temp = {p,0};
+				while((n % p)==0){
+					temp.second += 1;
+					n /= p;
+				}
+				// save <prime,power> to vector
+				if(temp.second > 0) ppv.push_back(temp);
+			}
+			return ppv;
+		}
 			
 		void legendre(vector<ul> &primes, ul n, vector<pair<ul,ul>> pp_out){
 			// Returns a vector of PrimePowers, each of which divides n!
@@ -132,7 +153,7 @@ int main(int argc, char **argv)
 
     const ul u_lo = 10;
     const ul u_hi = 1000;
-    const ul n_threads = 10;
+    const ul n_threads = 2;
     
     const ul elements = u_hi - u_lo + 1;
     const ul width = elements / n_threads;

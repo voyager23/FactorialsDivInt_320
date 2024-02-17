@@ -3,7 +3,7 @@
 TARGET=classblock
 
 $(TARGET): $(TARGET).cxx
-	g++ -std=c++17 -pthread -g $(TARGET).cxx ../../obj/toolbox.o -o ../../bin/$(TARGET)
+	g++ -std=c++17 -g $(TARGET).cxx ../../obj/toolbox.o -o ../../bin/$(TARGET)
 	
 #-------------------------------------------------------------------------------
 
