@@ -55,19 +55,24 @@ class Legendre
 		Legendre() {};
 		void run(Tdata &x) {
 				
-				i_fact.clear();
-				i_fact = legendre(x.primes, x.start);
+				descriptor.clear();
+				gen_descript(std::ref(x.primes), x.start, std::ref(descriptor));
 				
-				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 1000ms);	//debug
-				cout << "class legendre " << x.idx << " " << x.start << " " << (x.sentinel - 1) << " " << i_fact.size() << endl;				
+				i_fact.clear();
+				legendre(std::ref(x.primes), x.start, std::ref(i_fact));
+				
+				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 1000ms);	//debug pauses
+				
+				cout << "class legendre " << x.idx << " " << x.start << " " << (x.sentinel - 1) << " " << i_fact.size() << "  " << descriptor.size() << endl;				
 		}
 		
 	private:
 		pair_vect i_fact;			
+		pair_vect descriptor;			
 		ul local_n_min, n_min;
 		
-		pair_vect gen_descript(vector<ul> &primes, ul n){
-			pair_vect ppv;
+		void gen_descript(vector<ul> &primes, ul n, pair_vect & ppv){
+			//pair_vect ppv;
 			// Generates a vector of descriptors for integer n. Each element is a pair<prime, power>
 			std::pair<ul,ul> temp;
 			for(auto i = primes.begin(); i != primes.end(); ++i){
@@ -81,13 +86,13 @@ class Legendre
 				// save <prime,power> to vector
 				if(temp.second > 0) ppv.push_back(temp);
 			}
-			return ppv;
+			//return ppv;
 		}
 			
-		pair_vect legendre(vector<ul> &primes, ul n){
+		void legendre(vector<ul> &primes, ul n, pair_vect &pp_out){
 			// Returns a vector of PrimePowers, each of which divides n!
 			// Corrected version 27/01/24
-			pair_vect pp_out;
+			// pair_vect pp_out;
 			ul sum, divisor, r;
 			pp_out.clear();
 			for(auto pp = primes.begin(); *pp <= n; ++pp){
@@ -101,7 +106,7 @@ class Legendre
 				} while (r != 0);
 				pp_out.push_back(make_pair(*pp, sum));
 			}
-			return pp_out;
+			// return pp_out;
 		}
 
 		ul inverse_legendre_factorial(ul p, ul e){
@@ -140,25 +145,6 @@ class Legendre
 
 
 int main(int argc, char **argv)
-    //~ const ul elements = u_hi - u_lo + 1;
-    //~ const ul width = elements / n_threads;
-    //~ ul residue = elements % n_threads;
-    //~ ul begin = u_lo;
-    //~ ul end; // Sentinel one-past-end value
-    
-    //~ // Build the vector of thread data
-    //~ // td expects {idx, start, sentinel}
-    //~ // vector of Thread data
-    
-    //~ vector<Tdata> td;
-    //~ td.reserve(n_threads);
-    //~ for(unsigned t = 0; t != n_threads; t++){
-		//~ end = begin + width;
-		//~ if(residue > 0) {end += 1; residue -= 1;}
-		//~ cout << begin << "\t -> \t" << (end -1) << endl;
-		//~ td.push_back(Tdata{t, begin, end});
-		//~ begin = end;
-	//~ }
 {
 	SieveOfEratosthenes(vprime, 1000001);
 
@@ -182,13 +168,7 @@ int main(int argc, char **argv)
 		cout << begin << "\t -> \t" << (end -1) << endl;
 		td.push_back(Tdata{t, begin, end});
 		begin = end;
-	}   
-    // Thread data
-    //~ Tdata td1 = {1,600000,301};
-    //~ Tdata td2 = {2,700000,701};
-    //~ Tdata td3 = {3,800000,8001};
-    //~ Tdata td4 = {4,900000,9001};
-
+	}
 	
     // classes
     Legendre lg1 = Legendre();
@@ -199,11 +179,11 @@ int main(int argc, char **argv)
  
     // threads
 
-	auto v = std::thread(&Legendre::run, &lg1, std::ref(td[0]));
-	auto w = std::thread(&Legendre::run, &lg2, std::ref(td[1]));
-	auto x = std::thread(&Legendre::run, &lg3, std::ref(td[2]));
-	auto y = std::thread(&Legendre::run, &lg4, std::ref(td[3]));
-	auto z = std::thread(&Legendre::run, &lg5, std::ref(td[4]));
+	auto v = std::thread(&Legendre::run, std::ref(lg1), std::ref(td[0]));
+	auto w = std::thread(&Legendre::run, std::ref(lg2), std::ref(td[1]));
+	auto x = std::thread(&Legendre::run, std::ref(lg3), std::ref(td[2]));
+	auto y = std::thread(&Legendre::run, std::ref(lg4), std::ref(td[3]));
+	auto z = std::thread(&Legendre::run, std::ref(lg5), std::ref(td[4]));
 	
 	v.join();
 	w.join();
