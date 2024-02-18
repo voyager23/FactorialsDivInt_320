@@ -59,7 +59,7 @@ class Legendre
 				i_fact = legendre(x.primes, x.start);
 				
 				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 1000ms);	//debug
-				cout << "class legendre " << x.idx << " " << x.start << " " << x.sentinel << " " << i_fact.size() << endl;				
+				cout << "class legendre " << x.idx << " " << x.start << " " << (x.sentinel - 1) << " " << i_fact.size() << endl;				
 		}
 		
 	private:
@@ -140,12 +140,31 @@ class Legendre
 
 
 int main(int argc, char **argv)
+    //~ const ul elements = u_hi - u_lo + 1;
+    //~ const ul width = elements / n_threads;
+    //~ ul residue = elements % n_threads;
+    //~ ul begin = u_lo;
+    //~ ul end; // Sentinel one-past-end value
+    
+    //~ // Build the vector of thread data
+    //~ // td expects {idx, start, sentinel}
+    //~ // vector of Thread data
+    
+    //~ vector<Tdata> td;
+    //~ td.reserve(n_threads);
+    //~ for(unsigned t = 0; t != n_threads; t++){
+		//~ end = begin + width;
+		//~ if(residue > 0) {end += 1; residue -= 1;}
+		//~ cout << begin << "\t -> \t" << (end -1) << endl;
+		//~ td.push_back(Tdata{t, begin, end});
+		//~ begin = end;
+	//~ }
 {
 	SieveOfEratosthenes(vprime, 1000001);
 
     const ul u_lo = 10;
-    const ul u_hi = 1000;
-    const ul n_threads = 4;
+    const ul u_hi = 10000;
+    const ul n_threads = 5;
     
     const ul elements = u_hi - u_lo + 1;
     const ul width = elements / n_threads;
@@ -155,12 +174,20 @@ int main(int argc, char **argv)
     
     // Build the vector of thread data
     // td expects {idx, start, sentinel}
-    
+	vector<Tdata> td;
+	td.reserve(n_threads);
+	for(unsigned t = 0; t != n_threads; t++){
+		end = begin + width;
+		if(residue > 0) {end += 1; residue -= 1;}
+		cout << begin << "\t -> \t" << (end -1) << endl;
+		td.push_back(Tdata{t, begin, end});
+		begin = end;
+	}   
     // Thread data
-    Tdata td1 = {1,600000,301};
-    Tdata td2 = {2,700000,701};
-    Tdata td3 = {3,800000,8001};
-    Tdata td4 = {4,900000,9001};
+    //~ Tdata td1 = {1,600000,301};
+    //~ Tdata td2 = {2,700000,701};
+    //~ Tdata td3 = {3,800000,8001};
+    //~ Tdata td4 = {4,900000,9001};
 
 	
     // classes
@@ -168,14 +195,17 @@ int main(int argc, char **argv)
     Legendre lg2 = Legendre();
     Legendre lg3 = Legendre();
     Legendre lg4 = Legendre();
+    Legendre lg5 = Legendre();
  
     // threads
 
-	auto w = std::thread(&Legendre::run, &lg1, std::ref(td1));
-	auto x = std::thread(&Legendre::run, &lg2, std::ref(td2));
-	auto y = std::thread(&Legendre::run, &lg3, std::ref(td3));
-	auto z = std::thread(&Legendre::run, &lg4, std::ref(td4));
+	auto v = std::thread(&Legendre::run, &lg1, std::ref(td[0]));
+	auto w = std::thread(&Legendre::run, &lg2, std::ref(td[1]));
+	auto x = std::thread(&Legendre::run, &lg3, std::ref(td[2]));
+	auto y = std::thread(&Legendre::run, &lg4, std::ref(td[3]));
+	auto z = std::thread(&Legendre::run, &lg5, std::ref(td[4]));
 	
+	v.join();
 	w.join();
 	x.join();
 	y.join();
@@ -184,4 +214,4 @@ int main(int argc, char **argv)
 	cout << "Complete\n";
 	return 0;
 }
-
+	
