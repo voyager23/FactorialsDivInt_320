@@ -29,6 +29,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdint>
+#include <typeinfo>
 #include "../../ToolBox/toolbox.hxx"
 
 using namespace std;
@@ -61,9 +62,9 @@ class Legendre
 				i_fact.clear();
 				legendre(std::ref(x.primes), x.start, std::ref(i_fact));
 				
-				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 1000ms);	//debug pauses
+				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 100ms);	//debug pauses
 				
-				cout << "class legendre " << x.idx << " " << x.start << " " << (x.sentinel - 1) << " " << i_fact.size() << "  " << descriptor.size() << endl;				
+				cout << "class legendre \t" << x.idx << " " << x.start << "  " << (x.sentinel - 1) << " " << i_fact.size() << "  " << descriptor.size() << endl;				
 		}
 		
 	private:
@@ -149,8 +150,8 @@ int main(int argc, char **argv)
 	SieveOfEratosthenes(vprime, 1000001);
 
     const ul u_lo = 10;
-    const ul u_hi = 10000;
-    const ul n_threads = 5;
+    const ul u_hi = 1000000;
+    const ul n_threads = 10;
     
     const ul elements = u_hi - u_lo + 1;
     const ul width = elements / n_threads;
@@ -170,26 +171,22 @@ int main(int argc, char **argv)
 		begin = end;
 	}
 	
-    // classes
-    Legendre lg1 = Legendre();
-    Legendre lg2 = Legendre();
-    Legendre lg3 = Legendre();
-    Legendre lg4 = Legendre();
-    Legendre lg5 = Legendre();
- 
-    // threads
-
-	auto v = std::thread(&Legendre::run, std::ref(lg1), std::ref(td[0]));
-	auto w = std::thread(&Legendre::run, std::ref(lg2), std::ref(td[1]));
-	auto x = std::thread(&Legendre::run, std::ref(lg3), std::ref(td[2]));
-	auto y = std::thread(&Legendre::run, std::ref(lg4), std::ref(td[3]));
-	auto z = std::thread(&Legendre::run, std::ref(lg5), std::ref(td[4]));
+    // vector of classes
+    std::vector<Legendre> lg;
+    for(ul n = 0; n != n_threads; ++n) {
+		lg.push_back(Legendre());
+	}
 	
-	v.join();
-	w.join();
-	x.join();
-	y.join();
-	z.join();
+    // vector of threads
+    std::vector<std::thread> workers;
+    for(ul n = 0; n != n_threads; ++n){
+		auto v = std::thread(&Legendre::run, std::ref(lg[n]), std::ref(td[n]));
+		workers.push_back(move(v));
+	}
+	
+    for(ul n = 0; n != n_threads; ++n) {
+		workers[n].join();
+	}
     
 	cout << "Complete\n";
 	return 0;
