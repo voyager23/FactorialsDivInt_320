@@ -29,7 +29,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdint>
-#include <typeinfo>
+#include <unordered_map>
 #include "../../ToolBox/toolbox.hxx"
 
 using namespace std;
@@ -45,35 +45,52 @@ typedef struct
 {
 	unsigned idx;
 	ul start, sentinel;
+	ul Sum; // Computed thread sum mod 1e18
 	vector<ul> &primes = vprime;
 }Tdata;
 
 typedef vector<pair<ul,ul>> pair_vect;
 
+//---------------------------------------------------------------------------------------------
 class Legendre
 {
 	public:
 		Legendre() {};
 		void run(Tdata &x) {
-				
-				descriptor.clear();
-				gen_descript(std::ref(x.primes), x.start, std::ref(descriptor));
-				
-				i_fact.clear();
-				legendre(std::ref(x.primes), x.start, std::ref(i_fact));
-				
-				if(x.idx > 0) std::this_thread::sleep_for(x.idx * 100ms);	//debug pauses
-				
-				cout << "class legendre \t" << x.idx << " " << x.start << "  " << (x.sentinel - 1) << " " << i_fact.size() << "  " << descriptor.size() << endl;				
+			/* outline
+			 * On entry populate a map of prime/exponent pairs for factorial x.start.
+			 * Scan complete map to find minimum n for which (i!)^1234567890 | n!. This is n_min
+			 * for(i = x.start+1; i != sentinel; ++i) {
+			 * 		local_n_min = 0
+			 * 		find prime/exponent pairs for i
+			 * 		for each pair {
+			 * 			update map
+			 * 			update local_n_min
+			 * 		}
+			 * 		update n_min using local_n_min
+			 * 		update Sum using n_min
+			 * 	} // next value of i
+			 * 	finally - record (Sum % 1e18) in Tdata block
+			 * 	Stop
+			 */
+			
+					
+			i_fact.clear();
+			legendre(std::ref(x.primes), x.start, std::ref(i_fact));
+			
+			// output formatting pause
+			if(x.idx > 0) std::this_thread::sleep_for(x.idx * 50ms);
+			cout << "class legendre \t" << x.idx << " first n:" << x.start <<
+			"  last n:" << (x.sentinel - 1) << "   i_fact(size):" << i_fact.size() << endl;				
 		}
 		
 	private:
-		pair_vect i_fact;			
+		unordered_map<ul,ul> i_fact;			
 		pair_vect descriptor;			
 		ul local_n_min, n_min;
 		
 		void gen_descript(vector<ul> &primes, ul n, pair_vect & ppv){
-			//pair_vect ppv;
+			// pair_vect ppv;
 			// Generates a vector of descriptors for integer n. Each element is a pair<prime, power>
 			std::pair<ul,ul> temp;
 			for(auto i = primes.begin(); i != primes.end(); ++i){
@@ -90,7 +107,7 @@ class Legendre
 			//return ppv;
 		}
 			
-		void legendre(vector<ul> &primes, ul n, pair_vect &pp_out){
+		void legendre(vector<ul> &primes, ul n, unordered_map<ul,ul> &pp_out){
 			// Returns a vector of PrimePowers, each of which divides n!
 			// Corrected version 27/01/24
 			// pair_vect pp_out;
@@ -105,9 +122,12 @@ class Legendre
 					divisor *= (*pp);
 					sum += r;			
 				} while (r != 0);
-				pp_out.push_back(make_pair(*pp, sum));
+				auto rc = pp_out.emplace(*pp, sum);
+				if(rc.second == false){
+					cout << "Emplace failed. Prime:" << *pp << " sum:" << sum << endl;
+					exit(1);
+				}
 			}
-			// return pp_out;
 		}
 
 		ul inverse_legendre_factorial(ul p, ul e){
@@ -143,7 +163,7 @@ class Legendre
 			return sum;
 		}
 };
-
+//------------------------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
@@ -166,7 +186,7 @@ int main(int argc, char **argv)
 	for(unsigned t = 0; t != n_threads; t++){
 		end = begin + width;
 		if(residue > 0) {end += 1; residue -= 1;}
-		cout << begin << "\t -> \t" << (end -1) << endl;
+		//cout << begin << "\t -> \t" << (end -1) << endl;
 		td.push_back(Tdata{t, begin, end});
 		begin = end;
 	}
