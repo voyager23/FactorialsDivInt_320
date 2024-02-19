@@ -45,6 +45,7 @@ typedef struct
 {
 	unsigned idx;
 	ul start, sentinel;
+	const ul modulus = 1e18;
 	ul Sum; // Computed thread sum mod 1e18
 	vector<ul> &primes = vprime;
 }Tdata;
@@ -60,12 +61,13 @@ class Legendre
 			/* outline
 			 * On entry populate a map of prime/exponent pairs for factorial x.start.
 			 * Scan complete map to find minimum n for which (i!)^1234567890 | n!. This is n_min
+			 * 
 			 * for(i = x.start+1; i != sentinel; ++i) {
 			 * 		local_n_min = 0
 			 * 		find prime/exponent pairs for i
 			 * 		for each pair {
 			 * 			update map
-			 * 			update local_n_min
+			 * 			update local_n_min inverse_legendre_factorial
 			 * 		}
 			 * 		update n_min using local_n_min
 			 * 		update Sum using n_min
@@ -73,15 +75,28 @@ class Legendre
 			 * 	finally - record (Sum % 1e18) in Tdata block
 			 * 	Stop
 			 */
-			
-					
+			 
+			// output formatting pause
+			if(x.idx > 0) std::this_thread::sleep_for(x.idx * 100ms);
+			cout << "class legendre \t" << x.idx << " first n:" << x.start <<
+			"  last n:" << (x.sentinel - 1) << "  ";				
+				
+			// Entry	
 			i_fact.clear();
 			legendre(std::ref(x.primes), x.start, std::ref(i_fact));
-			
-			// output formatting pause
-			if(x.idx > 0) std::this_thread::sleep_for(x.idx * 50ms);
-			cout << "class legendre \t" << x.idx << " first n:" << x.start <<
-			"  last n:" << (x.sentinel - 1) << "   i_fact(size):" << i_fact.size() << endl;				
+
+			n_min = 0;
+			for(auto d = i_fact.begin(); d != i_fact.end(); ++d){
+				local_n_min = inverse_legendre_factorial(d->first, d->second*1234567890);
+				if ( local_n_min > n_min) n_min = local_n_min;
+			} // Next descriptor prime;
+			x.Sum = n_min % x.modulus;
+			for(ul i = x.start+1; i != x.sentinel; ++i){
+				gen_descript(std::ref(x.primes), i, descriptor);
+				
+			}
+				
+			cout << "   i_fact(size):" << i_fact.size() << endl;
 		}
 		
 	private:
@@ -91,6 +106,7 @@ class Legendre
 		
 		void gen_descript(vector<ul> &primes, ul n, pair_vect & ppv){
 			// pair_vect ppv;
+			ppv.clear();
 			// Generates a vector of descriptors for integer n. Each element is a pair<prime, power>
 			std::pair<ul,ul> temp;
 			for(auto i = primes.begin(); i != primes.end(); ++i){
