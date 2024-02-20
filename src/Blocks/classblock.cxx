@@ -59,7 +59,8 @@ class Legendre
 		Legendre() {};
 		void run(Tdata &x) {
 			/* outline
-			 * On entry populate a map of prime/exponent pairs for factorial x.start.
+			 * 
+			 * On Entry -  populate a map of prime/exponent pairs for factorial x.start.
 			 * Scan complete map to find minimum n for which (i!)^1234567890 | n!. This is n_min
 			 * 
 			 * for(i = x.start+1; i != sentinel; ++i) {
@@ -77,9 +78,8 @@ class Legendre
 			 */
 			 
 			// output formatting pause
-			if(x.idx > 0) std::this_thread::sleep_for(x.idx * 100ms);
-			cout << "class legendre \t" << x.idx << " first n:" << x.start <<
-			"  last n:" << (x.sentinel - 1) << "  ";				
+			// if(x.idx > 0) std::this_thread::sleep_for(x.idx * 100ms);
+				
 				
 			// Entry	
 			i_fact.clear();
@@ -90,14 +90,35 @@ class Legendre
 				local_n_min = inverse_legendre_factorial(d->first, d->second*1234567890);
 				if ( local_n_min > n_min) n_min = local_n_min;
 			} // Next descriptor prime;
+			// n_min is now correct for the first value of n - set value of Sum
 			x.Sum = n_min % x.modulus;
+			
+			// evaluate the remaining values of i in this block
 			for(ul i = x.start+1; i != x.sentinel; ++i){
+				// prime/exponent pairs for i
 				gen_descript(std::ref(x.primes), i, descriptor);
-				
-			}
-				
-			cout << "   i_fact(size):" << i_fact.size() << endl;
-		}
+				// for each pair - update the map and adjust the value of local_n_min 
+				for(auto d = descriptor.begin(); d != descriptor.end(); ++d){
+					auto p = i_fact.find(d->first);
+					if(p != i_fact.end()){ // found existing prime update exponent
+						p->second += d->second;
+					} else { // new prime
+						auto rc = i_fact.emplace(make_pair(d->first, d->second));
+						// update p to point to new entry
+						if(rc.second){
+							p = rc.first;
+						} else {
+							cout << "Emplace new value failed" << endl;
+						}
+					}
+					// find local_n_min for this prime/exponent pair
+					local_n_min = inverse_legendre_factorial(p->first, p->second * 1234567890);
+					// Adjust the n_min value as required
+					if ( local_n_min > n_min) n_min = local_n_min; 
+				} // next descriptor prime
+				x.Sum = n_min % x.modulus;							
+			} // for i...
+		} // run
 		
 	private:
 		unordered_map<ul,ul> i_fact;			
@@ -186,7 +207,7 @@ int main(int argc, char **argv)
 	SieveOfEratosthenes(vprime, 1000001);
 
     const ul u_lo = 10;
-    const ul u_hi = 1000000;
+    const ul u_hi = 1000;
     const ul n_threads = 10;
     
     const ul elements = u_hi - u_lo + 1;
@@ -220,11 +241,15 @@ int main(int argc, char **argv)
 		workers.push_back(move(v));
 	}
 	
+	ul S = 0;
     for(ul n = 0; n != n_threads; ++n) {
 		workers[n].join();
+		// output index and sum for each thread
+		cout << "idx:" << td[n].idx << "  thread_Sum:" << td[n].Sum << endl;
+		S += td[n].Sum;
 	}
     
-	cout << "Complete\n";
+	cout << "Complete Sum:" << S << endl;
 	return 0;
 }
 	
